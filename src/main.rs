@@ -5,6 +5,8 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
 
+// Metoda tablicowa, pierwsze przybliżenie metoda północno zachodniego wierzchołka, dla problemu pośrednika
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Config{
     fields: Vec<Field>,
@@ -12,11 +14,10 @@ struct Config{
     recipients: Vec<Etnities>,
 }
 
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Field{
-    supplier_id: i32,
-    recipient_id: i32,
+    supplier_id: usize,
+    recipient_id: usize,
     cost: i32,
     value: i32
 }
@@ -24,7 +25,21 @@ struct Field{
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Etnities {
     id: i32,
-    value: i32
+    value: i32,
+}
+
+#[derive(Clone, Debug)]
+struct DualVar {
+    value: i32,//Afla - supplier,
+    //Beta - recipents
+}
+
+impl DualVar {
+    pub fn new (value: i32) -> DualVar {
+        DualVar{ 
+            value: value
+        }
+    }
 }
 
 fn temp_config<P: AsRef<Path>> (path: P) -> Result<Config, Box< dyn Error>> {
@@ -53,6 +68,57 @@ fn nw_method(config: &mut Config) -> i32 {
     cost
 }
 
+fn get_dual_vars(fields: &Vec<Field>) -> (Vec<DualVar>, Vec<DualVar>) {
+    let mut aflas: Vec<DualVar> = vec![DualVar::new(0), DualVar::new(0), DualVar::new(0)];
+    let mut betas: Vec<DualVar> = vec![DualVar::new(0); 3];
+    for field in fields {
+
+        if 0 != field.value {
+            let beta = &mut betas[field.recipient_id].value;
+            let alfa = &mut aflas[field.supplier_id].value;
+            let cost = & field.cost;
+
+           if 0 == *beta { 
+                *beta = *cost - *alfa;
+           }
+           if 0 == *alfa {
+               *alfa = *cost - *beta;
+           }
+        }
+    }
+    (aflas, betas)
+}
+
+
+
+fn optimize(fields: Vec<Field>, alfas: Vec<DualVar>, betas: Vec<DualVar>) -> bool {
+    let mut optimized = true;
+
+    for mut field in fields {
+        if 0 != field.value{
+            field.cost = 0;
+        } 
+        else {
+            field.cost -= alfas[field.supplier_id].value + betas[field.recipient_id].value;
+            if field.cost < 0{
+                optimized = false;     
+            }
+        }
+    }
+
+    if !optimized {
+        {
+            
+        }        
+    }
+
+    optimized
+}
+
+fn iterate_optimize() {
+    
+}
+
 fn export_to_json(config: &Config, cost: &i32)
 {
     let mut json = serde_json::to_string_pretty(config).unwrap();
@@ -60,8 +126,6 @@ fn export_to_json(config: &Config, cost: &i32)
 
     json.push_str(cost_json.as_str());
     println!("{}",json);
-
-
 }
 
 fn main() {
@@ -70,7 +134,14 @@ fn main() {
 
     let cost = nw_method(&mut config);
 
-    export_to_json(&config, &cost);
+    let (aflas, betas) = get_dual_vars(&config.fields);
+
+    println!("{:?}", aflas);
+    println!("{:?}", betas);
+
+
+
+    //export_to_json(&config, &cost);
 
 }
 
