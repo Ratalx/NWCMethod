@@ -1,0 +1,11 @@
+[package]
+name = "nwp_method"
+version = "0.1.0"
+authors = ["Ratalx <k.szczygiel166@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde_json="1.0.41"
+serde={version = "1.0.101", features = ["derive"] }
