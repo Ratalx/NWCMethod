@@ -37,10 +37,12 @@ Vue - The Newest of Big Tree JS frameworks for Front-End (React, Angular, Vue):
 
 Logic :
 
--  [ ] Optimize iteration
--  [ ] Getting alfa beta
+-  [x] Optimize iteration
+-  [x] Getting alfa beta
 -  [ ] Better naming 
--  [ ] Cycles
+-  [x] Cycles
+-  [ ] Broker Problem
+-  [ ] Solving not balanced problems
 
 
 
