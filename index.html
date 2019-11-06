@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NWC Method</title>
+    <link rel="stylesheet" href="style/style.css">
+    <script src="js/script.js"></script>
+</head>
+<body>
+    <h1>Supplier - Recipient problem with broker </h1>
+
+<button type="button" id="supplier_btn" onclick="addSupplier()">Add Supplier</button> 
+   
+<div class="table">
+        <div class="names">
+            <div class="cell" id="empty_cell">
+
+            </div>
+            <div class="cell"> S0
+                <div class="supplier_prop">
+                    <input type="text" size="1">    
+                    <input type="text" size="1">  
+                </div>  
+            </div></div>
+        <div class="row">
+            <div class="cell">
+                R0
+                <div class="recipient_prop">
+                    <input type="text" size="1">
+                    <input type="text" size="1">
+                </div>  
+            </div><div class="cell">
+                    <div class="cell_prop">
+                            <input type="text" size="1">    
+                    </div>  
+            </div></div>
+    </div>
+
+
+</table>
+
+<button type="button" id="recipient_btn" onclick="addRecipient()">Add Recipient</button> 
+
+<button type="button" id="start_btn" onclick="start()">Start</button> 
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+
+.table { margin: auto; width: 60%;} 
+.row { border: solid blue 1px; text-align: left;} 
+.names { border: solid blue 1px; text-align: left; } 
+.cell {display: inline-block; border: solid red 1px;  min-width: 69px;} 
+.supplier_prop {
+    display:block;
+}
+.recipient_prop {
+    display: block;
+}
+.cell_prop {
+    text-align: center;
+}
+#empty_cell {
+    width:65px;
+    border: none;
+}
+
+h1 {
+    text-align: center;
+}
+
+#supplier_btn {
+    float: right;
+    margin-right: 20%;
+}
+#recipient_btn {
+    float: left;
+    margin-left: 20%;
+    margin-top: 1%;
+}
+
+#start_btn{
+    float: left;
+    margin: 20%;
+    margin-top: 3%;
+    width: 200px;
+    height: 50px;
+}
