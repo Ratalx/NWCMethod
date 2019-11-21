@@ -1,0 +1,69 @@
+{
+    "fields": [
+        {
+            "supplier_id": 0, 
+            "recipient_id": 0, 
+            "cost": 2,
+            "value": 0
+        },
+        {
+            "supplier_id": 0, 
+            "recipient_id": 1, 
+            "cost": 3,
+            "value": 0
+        },
+        {
+            "supplier_id": 0, 
+            "recipient_id": 2, 
+            "cost": 5,
+            "value": 0
+        },
+        {
+            "supplier_id": 1, 
+            "recipient_id": 0, 
+            "cost": 2,
+            "value": 0
+        },
+        {
+            "supplier_id": 1, 
+            "recipient_id": 1, 
+            "cost": 3,
+            "value": 0
+        },
+        {
+            "supplier_id": 1, 
+            "recipient_id": 2, 
+            "cost": 4,
+            "value": 0
+        }
+    ],
+    "suppliers": [  
+        {
+            "id": 0,
+            "value": 40,
+            "price": 18
+        },
+        {
+            "id": 1,
+            "value": 25,
+            "price": 20
+        }
+    ],
+    "recipients": [
+        {
+            "id": 0,
+            "value": 30,
+            "price": 23
+        },
+        {
+            "id": 1,
+            "value": 15,
+            "price": 21
+        },
+        {
+            "id": 2,
+            "value": 15,
+            "price": 25
+        }
+    ]
+}

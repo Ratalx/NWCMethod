@@ -1,33 +1,10 @@
-use serde::{Deserialize, Serialize};
-use std::cmp::min;
 use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
-
+pub mod task_data;
+use task_data::{TaskData, Field};
 // Metoda tablicowa, pierwsze przybliżenie metoda północno zachodniego wierzchołka, dla problemu pośrednika
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct Config {
-    fields: Vec<Field>,
-    suppliers: Vec<Etnities>,
-    recipients: Vec<Etnities>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-struct Field {
-    supplier_id: usize,
-    recipient_id: usize,
-    cost: i32,
-    value: i32
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct Etnities {
-    id: usize,
-    value: i32,
-    price: i32,
-}
 
 #[derive(Clone, Debug)]
 struct DualVar {
@@ -43,91 +20,7 @@ impl DualVar {
     }
 }
 
-impl Etnities {
-    pub fn new(id: usize, value: i32, price: i32) -> Etnities {
-        Etnities {
-            id: id,
-            value: value,
-            price: price,
-        }
-    }
-}
-
-impl Field {
-    pub fn new(supplier_id: usize, recipient_id: usize) -> Field {
-        Field {
-            supplier_id: supplier_id,
-            recipient_id: recipient_id,
-            value: 0,
-            cost: 0,
-        }
-    }
-}
-
-impl Config {
-
-    pub fn ballance(self: &mut Self) {
-        let mut suppliers_sum = 0;
-        let mut recipients_sum = 0;
-
-        for supplier in &mut self.suppliers {
-            suppliers_sum += supplier.value;
-        }
-
-        for recipient in &mut self.recipients {
-            recipients_sum += recipient.value;
-        }
-
-        if suppliers_sum == recipients_sum {
-            return ;
-        }
-
-        if suppliers_sum > recipients_sum {
-            let id = self.recipients.len();
-            let mut index = self.recipients.len();
-
-            self.recipients.push(Etnities::new(id, suppliers_sum - recipients_sum, 0));
-
-            for supplier in &self.suppliers {
-                self.fields.insert(index, Field::new(id, supplier.id));
-                index += self.recipients.len();
-            }
-        }
-        
-        else {
-            let id = self.suppliers.len();
-
-            self.suppliers.push(Etnities::new(id, recipients_sum - suppliers_sum, 0));
-            for recipient in &self.recipients {
-                self.fields.push(Field::new(id, recipient.id))
-            }
-        }
-
-    }
-
-    pub fn calculate_gains(self: &mut Self) {
-        
-        for field in &mut self.fields {
-            if field.cost != 0 {
-                field.cost = self.recipients[field.recipient_id].price - self.suppliers[field.supplier_id].price - field.cost;
-            }
-        }
-    }
-
-    pub fn nw_method(self: &mut Self) -> i32 {
-        let mut cost: i32 = 0;
-
-        for  field in &mut self.fields {
-            field.value = min(self.suppliers[field.supplier_id as usize].value, self.recipients[field.recipient_id as usize].value);
-            self.suppliers[field.supplier_id as usize].value -= field.value;
-            self.recipients[field.recipient_id as usize].value -= field.value;
-            cost += field.cost*field.value;
-        }
-        cost
-    }
-}
-
-fn temp_config<P: AsRef<Path>> (path: P) -> Result<Config, Box< dyn Error>> {
+fn temp_config<P: AsRef<Path>> (path: P) -> Result<TaskData, Box< dyn Error>> {
     let file = File::open(path)?;
     let reader = BufReader::new(file);  
 
@@ -136,7 +29,6 @@ fn temp_config<P: AsRef<Path>> (path: P) -> Result<Config, Box< dyn Error>> {
     Ok(config)
 
 }
-
 
 fn get_dual_vars(fields: &Vec<Field>, suppliers_size: usize, recipents_size: usize ) -> (Vec<DualVar>, Vec<DualVar>) {
     let mut aflas: Vec<DualVar> = vec![DualVar::new(0); suppliers_size];
@@ -205,42 +97,42 @@ fn make_cycle(fields: &Vec<Field>, min_val_index: usize) -> Option<(Vec<Field>, 
             loop {
                 match other.iter().find(|other_field| (other_field.recipient_id == recipient_id 
                                                 && other_field.supplier_id == supplier_id)) {
-                                                    Some(field) => {
-                                                        if positive {
-                                                            positive_fields.push((*field).clone());   
-                                                        }
-                                                        else {
-                                                            negative_fields.push((*field).clone());
-                                                        }
-                                                        if (negative_fields.len() + positive_fields.len()) % 2 == 0 {
-                                                            return Some((positive_fields, negative_fields))              
-                                                        }
-                                                        break                        
-                                                    }
-                                                    None => { 
-                                                        let tab = if positive {&mut positive_fields} else {&mut negative_fields}; 
-                                                        let mut count = 0;
-                                                        let temp_supplier_id = supplier_id.clone();
-                                                        let temp_recipient_id = recipient_id.clone();
+                    Some(field) => {
+                        if positive {
+                            positive_fields.push((*field).clone());   
+                        }
+                        else {
+                            negative_fields.push((*field).clone());
+                        }
+                        if (negative_fields.len() + positive_fields.len()) % 2 == 0 {
+                            return Some((positive_fields, negative_fields))              
+                        }
+                        break                        
+                    }
+                    None => { 
+                        let tab = if positive {&mut positive_fields} else {&mut negative_fields}; 
+                        let mut count = 0;
+                        let temp_supplier_id = supplier_id.clone();
+                        let temp_recipient_id = recipient_id.clone();
 
-                                                        for other_field in &other {
-                                                            if other_field.supplier_id == temp_supplier_id {
-                                                                recipient_id = other_field.recipient_id;
-                                                                tab.push((*other_field).clone());
-                                                                count += 1;
-                                                            }
-                                                            if other_field.recipient_id == temp_recipient_id {
-                                                                supplier_id = other_field.supplier_id;
-                                                                tab.push((*other_field).clone());
-                                                                count += 1;
-                                                            }
-                                                        }
-                                                        positive = !positive;
-                                                        if count != 2 {
-                                                            break
-                                                        }
-                                                    }
-                                                }
+                        for other_field in &other {
+                            if other_field.supplier_id == temp_supplier_id {
+                                recipient_id = other_field.recipient_id;
+                                tab.push((*other_field).clone());
+                                count += 1;
+                            }
+                            if other_field.recipient_id == temp_recipient_id {
+                                supplier_id = other_field.supplier_id;
+                                tab.push((*other_field).clone());
+                                count += 1;
+                            }
+                        }
+                        positive = !positive;
+                        if count != 2 {
+                            break
+                        }
+                    }
+                }
             }
                                             
        }
@@ -255,10 +147,16 @@ fn optimize_iteration(mut fields: Vec<Field>, suppliers_size: usize, recipents_s
     let (alfas, betas) = get_dual_vars(&fields, suppliers_size, recipents_size);
     let mut largest_field = (fields[0].cost - alfas[fields[0].supplier_id].value - betas[fields[0].recipient_id].value, 0);
 
+        println!();
+        println!("Afla = {:?}", alfas);
+        println!();
+        println!("Beta = {:?}", betas);
+
     for  field in &mut fields.clone() {
         field.cost -= alfas[field.supplier_id].value + betas[field.recipient_id].value;
 
         if field.cost > 0 {
+            println!("Field = {:?}", field);
             optimized = false;
             if largest_field.0 < field.cost {
                 largest_field = (field.cost, temp_id);
@@ -305,11 +203,13 @@ fn optimize_iteration(mut fields: Vec<Field>, suppliers_size: usize, recipents_s
 
 fn main() {
 
-    let mut config = temp_config("tempJson/data2.json").unwrap(); 
+    let mut config = temp_config("tempJson/data3.json").unwrap(); 
 
     config.ballance();
     config.calculate_gains();
+
     let gains = config.nw_method();
+
     println!("Gains = {:}", gains);
     let new_fields = optimize_iteration(config.fields, config.suppliers.len(), config.recipients.len());
     println!("New Fileds \n {:?}", new_fields);

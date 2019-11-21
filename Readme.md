@@ -19,13 +19,13 @@ I choose technology based on my personal interest:
 * Less OOP, only traits with structs and Enums
 * And a lot more ...
 
-Rust works as backend using Rocket framework and contains whole logic of assignment.
+Rust is used as wasm functions.
 I use serde for serialization.
 
-I may change Backend - Frontend App for Single Site Frontend with Rust wasm functions.
-https://medium.com/@brockreece/vue-webassembly-1a09e38d0389
 
 ### Front-End - First idea is to make it in veu.js but as I m not familiar with this technology it maybe naive idea.
+
+**Currently** i use simple html with js for prototype.
 
 Vue - The Newest of Big Tree JS frameworks for Front-End (React, Angular, Vue):
 * Fast
@@ -33,16 +33,21 @@ Vue - The Newest of Big Tree JS frameworks for Front-End (React, Angular, Vue):
 * Renders dom diffrence (Angural) rather then whole (React)
 
 
+
+
 ## ToDo:
 
-Logic :
-
--  [x] Optimize iteration
--  [x] Getting alfa beta
--  [ ] Better naming 
--  [x] Cycles
--  [ ] Broker Problem
--  [ ] Solving not balanced problems
+* High Priority:
+    -  [ ] Fixing alfa beta algorithm
+    -  [ ] Adding tests for logic of program
+* Mid Priority:
+    -  [ ] Finishing html
+    -  [ ] Finishing js
+    -  [ ] Adding some css
+    -  [ ] Connecting our site with logic written in rust using webassemby
+* Low Priority:
+    -  [ ] Better naming as some of them are 1 to 1 translation from polish
+    -  [ ] Better structutre of files
 
 
 
